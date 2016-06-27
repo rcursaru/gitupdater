@@ -3,6 +3,7 @@
 # This file is run by updater, if a new version was available
 # at every incremental update you can run arbitrary commands to update the system
 #
+# refactoring:" mutat patchlevel in fisier externe, chemate de aici"
 VERSION_NEW="9"
 VERSION_FILE="patch.version"
 
@@ -43,6 +44,11 @@ function PATCH_INCREMENTAL {
 			echo "VERSION_CURRENT=\"$1\"" > $VERSION_FILE
 			;;
 		10)
+			sed -i '/user/s/appuser/appuser3/g' /etc/php5/fpm/pool.d/www.conf
+			sed -i '/group/s/appuser/appuser3/g' /etc/php5/fpm/pool.d/www.conf
+			sed -i '/fastcgi_pass/s/127\.0\.0\.1\:9000/\/var\/run\/php5\-fpm\.sock/g' /etc/nginx/conf.d/*.bsoftce.com.conf
+			service php5-fpm restart
+			service nginx reload
 			echo "VERSION_CURRENT=\"$1\"" > $VERSION_FILE
 			;;
 		11)
