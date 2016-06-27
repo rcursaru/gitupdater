@@ -1,4 +1,8 @@
 #! /bin/bash
+#
+# This file is run by updater, if a new version was available
+# at every incremental update you can run arbitrary commands to update the system
+#
 VERSION_NEW="9"
 VERSION_FILE="patch.version"
 
