@@ -1,5 +1,7 @@
 #! /bin/bash
-
+#
+# this file is run by cronjob
+#
 LAST_RUN_FILE="repo-autoupdate.run"
 cd /git/server_management
 
