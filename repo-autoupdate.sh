@@ -11,7 +11,7 @@ else
     git pull origin
 	chmod -R g-rwx /git/server_management
 	chmod -R o-rwx /git/server_management
-	echo `date` > $LAST_RUN_FILE
+	echo `date` >> $LAST_RUN_FILE
 	./patch.sh
 fi
 
