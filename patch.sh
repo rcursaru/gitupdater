@@ -3,48 +3,45 @@
 # this file is run by cronjob
 #
 
-# determine pwd
-PWD="`dirname \"$0\"`"                                                      
-PWD="`(cd \"$PWD\" && pwd )`"                                               
-
+# get pwd
+PWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # local versions are stored here
-VERSION_CURRENT="$PWD/patch.version"
-VERSION_TARGET="$PWD/patch.target"
+VERSION_CURRENT_FILE="$PWD/patch.version"
+VERSION_TARGET_FILE="$PWD/patch.target"
 
 # get current version
-if [ ! -f "$VERSION_CURRENT" ]; then
-	echo "VERSION_CURRENT=0" > $VERSION_CURRENT
+if [ ! -f "$VERSION_CURRENT_FILE" ]; then
+	echo "VERSION_CURRENT=0" > $VERSION_CURRENT_FILE
 fi
 
-. "$PWD/$VERSION_CURRENT"
+. "$VERSION_CURRENT_FILE"
 echo "Current version is $VERSION_CURRENT"
 
 # get target version
-. "$PWD/$VERSION_TARGET"
-NEXT_VERSION=$VERSION_CURRENT
+. "$VERSION_TARGET_FILE"
 echo "Target version is $VERSION_TARGET"
 
 # while we are behind VERSION_TARGET
 while [ $VERSION_CURRENT -lt $VERSION_TARGET ]
 do
 	# go to the next version
-	NEXT_VERSION=$((NEXT_VERSION+1))
+	VERSION_CURRENT=$((VERSION_CURRENT+1))
 
 	# increment version
-   	if [ ! -f "updates/update-$NEXT_VERSION.sh" ]; then
-		echo "Update $NEXT_VERSION not available."
+   	if [ ! -f "$PWD/updates/update-$VERSION_CURRENT.sh" ]; then
+		echo "Update $VERSION_CURRENT not available."
 		break
    	fi
-	echo "Running updates update-$NEXT_VERSION.sh"
-	chmod +x ./"updates/update-$NEXT_VERSION.sh"
-	./"updates/update-$NEXT_VERSION.sh"
+	echo "Running updates update-$VERSION_CURRENT.sh"
+	chmod +x "$PWD/updates/update-$VERSION_CURRENT.sh"
+	"$PWD/updates/update-$VERSION_CURRENT.sh"
 
 	# is there any point in this?
-	chmod -x ./"updates/update-$NEXT_VERSION.sh"
+	chmod -x "$PWD/updates/update-$VERSION_CURRENT.sh"
 
 	# save the last version
-	echo "VERSION_CURRENT=$NEXT_VERSION" > $VERSION_CURRENT
+	echo "VERSION_CURRENT=$VERSION_CURRENT" > $VERSION_CURRENT_FILE
 done
 
 echo "DONE"
