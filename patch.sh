@@ -3,24 +3,29 @@
 # this file is run by cronjob
 #
 
-VERSION_CURRENT="patch.version"
-VERSION_TARGET="patch.target"
+# determine pwd
+PWD="`dirname \"$0\"`"                                                      
+PWD="`(cd \"$PWD\" && pwd )`"                                               
 
+
+# local versions are stored here
+VERSION_CURRENT="$PWD/patch.version"
+VERSION_TARGET="$PWD/patch.target"
+
+# get current version
 if [ ! -f "$VERSION_CURRENT" ]; then
-	# create a new file and write VERSION_CURRENT=0 in it
 	echo "VERSION_CURRENT=0" > $VERSION_CURRENT
 fi
 
-# get current version
-. ./"$VERSION_CURRENT"
+. "$PWD/$VERSION_CURRENT"
 echo "Current version is $VERSION_CURRENT"
 
 # get target version
-. ./"$VERSION_TARGET"
-
+. "$PWD/$VERSION_TARGET"
 NEXT_VERSION=$VERSION_CURRENT
+echo "Target version is $VERSION_TARGET"
 
-# maximum 5 updates per batch to avoid infinit loop
+# while we are behind VERSION_TARGET
 while [ $VERSION_CURRENT -lt $VERSION_TARGET ]
 do
 	# go to the next version
@@ -37,11 +42,10 @@ do
 
 	# is there any point in this?
 	chmod -x ./"updates/update-$NEXT_VERSION.sh"
-	
-done
 
-# save the last version
-echo "VERSION_CURRENT=$NEXT_VERSION" > $VERSION_CURRENT
+	# save the last version
+	echo "VERSION_CURRENT=$NEXT_VERSION" > $VERSION_CURRENT
+done
 
 echo "DONE"
 exit 0;
